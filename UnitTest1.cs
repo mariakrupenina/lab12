@@ -4,6 +4,7 @@ using library_for_lab10;
 using MyListTests;
 using lab12;
 
+
 namespace MyListTests
 {
     [TestClass]
@@ -145,38 +146,152 @@ namespace MyListTests
         }
 
         [TestMethod]
-        public void RemoveUntilItemWhenItemToRemoveNotFound()
+        public void AddsItemToEndOfList()
         {
             //Arrange
-            MyList<Tool> myList = new MyList<Tool>();
-            Tool tool = new Tool();
-            tool.Init();
+            var myList = new MyList<Tool>();
 
-            //ActAssert
-            Assert.ThrowsException<Exception>(() => myList.RemoveUntilItem(tool));
-        }
-
-        [TestMethod]
-        public void RemoveUntilItemWhenItemToRemoveExists()
-        {
-            //Arrange
-            MyList<Tool> myList = new MyList<Tool>();
-            Tool tool1 = new Tool();
-            Tool tool2 = new Tool();
-            Tool tool3 = new Tool();
-            tool1.Init();
-            tool2.Init();
-            tool3.Init();
-            myList.AddToEnd(tool1);
-            myList.AddToEnd(tool2);
-            myList.AddToEnd(tool3);
-
-            //Act
-            myList.RemoveUntilItem(tool2);
+            // Act
+            var tool = new Tool();
+            myList.AddToEnd(tool);
 
             //Assert
-            Assert.AreEqual(1, myList.Count);
-            Assert.AreEqual(tool2, myList.beg.Data);
+            Assert.AreEqual(tool, myList.GetFirstItem());
+        }
+
+        public void GetFirstItem_ReturnsFirstItem()
+        {
+            //Arrange
+            var myList = new MyList<Tool>();
+            var expectedTool = new Tool();
+            myList.AddToEnd(expectedTool);
+
+            //Act
+            var actualTool = myList.GetFirstItem();
+
+            //Assert
+            Assert.AreEqual(expectedTool, actualTool);
+        }
+        [TestClass]
+        public class UnitTest2
+        {
+            [TestMethod]
+            public void AddItemWhenCapacityExceeded()
+            {
+                //Arrange
+                var hashTable = new MyHashTable2<Tool>(2, 0.72); //ёмкость 2, заполненность 72%
+                hashTable.AddItem3(new Tool()); //первое добавление
+
+                //Act
+                hashTable.AddItem3(new Tool()); //второе добавление
+
+                //Assert
+                Assert.AreEqual(4, hashTable.Capacity); //ожидаем, что ёмкость увеличена до 4
+            }
+
+            [TestMethod]
+            public void AddItem2WhenTableIsEmpty()
+            {
+                //Arrange
+                var hashTable = new MyHashTable2<Tool>();
+
+                //Act
+                hashTable.AddItem3(new Tool());
+
+                //Assert
+                Assert.AreEqual(1, hashTable.Count); //Ожидаем, что количество элементов равно 1
+            }
+
+            [TestMethod]
+            public void AddItemWhenTableIsNotEmpty()
+            {
+                //Arrange
+                var hashTable = new MyHashTable2<Tool>();
+                hashTable.AddItem3(new Tool()); 
+
+                //Act
+                hashTable.AddItem3(new Tool()); 
+
+                //Assert
+                Assert.AreEqual(2, hashTable.Count); //Ожидаем, что количество элементов равно 2
+            }
+
+            [TestMethod]
+            public void RemoveItemWhenItemExists()
+            {
+                //Arrange
+                var hashTable = new MyHashTable2<Tool>();
+                var tool = new Tool();
+                hashTable.AddItem3(tool); //добавляем элемент
+
+                //Act
+                bool removed = hashTable.RemoveItem(tool);
+
+                //Assert
+                Assert.IsTrue(removed); //ожидаем удаление
+                Assert.AreEqual(0, hashTable.Count); //ожидаем, что количество элементов уменьшилось до 0
+            }
+
+            [TestMethod]
+            public void AddItemWhenTableIsEmpty()
+            {
+                //Arrange
+                var hashTable = new MyHashTable2<Tool>();
+                var newTool = new Tool();
+
+                //Act
+                hashTable.AddItem3(newTool);
+
+                //Assert
+                Assert.AreEqual(1, hashTable.Count);
+                Assert.IsTrue(hashTable.Contains(newTool));
+            }
+
+            [TestMethod]
+            public void RemoveItemWhenItemExist()
+            {
+                //Arrange
+                var hashTable = new MyHashTable2<Tool>();
+                var toolToRemove = new Tool();
+                hashTable.AddItem3(toolToRemove);
+
+                //Act
+                bool removed = hashTable.RemoveItem(toolToRemove);
+
+                //Assert
+                Assert.IsTrue(removed);
+                Assert.AreEqual(0, hashTable.Count);
+                Assert.IsFalse(hashTable.Contains(toolToRemove));
+            }
+
+            [TestMethod]
+            public void ContainsWhenItemExists()
+            {
+                //Arrange
+                var hashTable = new MyHashTable2<Tool>();
+                var existingTool = new Tool();
+                hashTable.AddItem3(existingTool);
+
+                //Act
+                bool result = hashTable.Contains(existingTool);
+
+                //Assert
+                Assert.IsTrue(result);
+            }
+
+            [TestMethod]
+            public void ContainsWhenItemNotExist()
+            {
+                //Arrange
+                var hashTable = new MyHashTable2<Tool>();
+                var nonExistingTool = new Tool();
+
+                //Act
+                bool result = hashTable.Contains(nonExistingTool);
+
+                //Assert
+                Assert.IsFalse(result);
+            }
         }
     }
 }
